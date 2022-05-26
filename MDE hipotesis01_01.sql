@@ -1,36 +1,3 @@
-SELECT module,action,count(id) as counter FROM mdl_log GROUP BY module,action ORDER BY module,counter desc;
-
-/*
-select t.table_name
-from information_schema.tables as t 
-inner join information_schema.columns as c On t.TABLE_NAME = c.TABLE_NAME
-Where t.TABLE_TYPE = 'BASE TABLE' AND column_name = 'user_id' And t.table_schema = 'NOMBRE_BASE_DE_DATOS'
-*/
-
-SELECT * FROM mdl_log;
-
-SELECT * FROM mdl_backup_logs;
-
-SELECT userid,MIN(time),course, module FROM mdl_log WHERE action='view' AND module='course' AND userid='4'
-
-select * from mdl_user;
-
-SELECT id, course, name, DATE_ADD('1970-01-01', INTERVAL allowsubmissionsfromdate SECOND) AS allowsubmissionsfromdate, DATE_ADD('1970-01-01', INTERVAL duedate SECOND) AS duedate, cutoffdate FROM mdl_assign 
-where course = 2 and name like 'repaso%';
-
-/*SELECT * FROM mdl_assign where course = 2 and name like 'Iden%';*/
-
-
-/*
-SELECT * FROM mdl_user WHERE firstname LIKE 'justino es%';
-SELECT * FROM mdl_grade_items WHERE id = 47 AND itemname LIKE 'rep%';
-SELECT DATE_ADD('1970-01-01', INTERVAL timemodified SECOND) AS timemodified FROM mdl_grade_items WHERE id = 47 AND itemname LIKE 'rep%';
-*/
-
-SELECT * FROM mdl_grade_grades where itemid=47 ;
-
-
-
 SELECT  rank, idcurso, idactividad, idalumno, nota, fechanota, elementocalificador
 FROM 
 (
@@ -49,7 +16,7 @@ DATE_ADD('1970-01-01', INTERVAL mdl_grade_grades.timemodified SECOND) AS fechano
     
     /*Interaccion02_01 mejor nota*/ 
     /*ROW_NUMBER() OVER (PARTITION BY idcurso, idactividad ORDER BY idcurso asc, idActividad asc, nota desc, fechanota asc) AS rank*/
-    /*Interaccion02_01 último en entregar*/ 
+    /*Interaccion02_01 Ãºltimo en entregar*/ 
     /*ROW_NUMBER() OVER (PARTITION BY idcurso, idactividad ORDER BY idcurso asc, idActividad asc, fechanota desc, nota desc) AS rank*/
     
     /*mdl_grade_items.sortorder*/
@@ -71,5 +38,32 @@ WHERE mdl_grade_items.courseid = mdl_course.id
         AND mdl_user.id NOT IN(30,21,42,46)
         ) AS X
         WHERE idactividad = 47
- /*WHERE rank < 5 AND elementocalificador LIKE 'Repa%'*/
+WHERE rank < 5 
 
+
+/*
+SELECT module,action,count(id) as counter FROM mdl_log GROUP BY module,action ORDER BY module,counter desc;
+
+
+SELECT * FROM mdl_log;
+
+SELECT * FROM mdl_backup_logs;
+
+SELECT userid,MIN(time),course, module FROM mdl_log WHERE action='view' AND module='course' AND userid='4'
+
+select * from mdl_user;
+
+SELECT id, course, name, DATE_ADD('1970-01-01', INTERVAL allowsubmissionsfromdate SECOND) AS allowsubmissionsfromdate, DATE_ADD('1970-01-01', INTERVAL duedate SECOND) AS duedate, cutoffdate FROM mdl_assign 
+where course = 2 and name like 'repaso%';
+
+/*SELECT * FROM mdl_assign where course = 2 and name like 'Iden%';*/
+
+
+/*
+SELECT * FROM mdl_user WHERE firstname LIKE 'justino es%';
+SELECT * FROM mdl_grade_items WHERE id = 47 AND itemname LIKE 'rep%';
+SELECT DATE_ADD('1970-01-01', INTERVAL timemodified SECOND) AS timemodified FROM mdl_grade_items WHERE id = 47 AND itemname LIKE 'rep%';
+
+SELECT * FROM mdl_grade_grades where itemid=47 ;
+
+*/

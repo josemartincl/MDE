@@ -1,5 +1,4 @@
-
-SELECT  rank, idcurso, idalumno, idactividad, nota, fechanota, elementocalificador
+SELECT  rank, idcurso, idactividad, idalumno, nota, fechanota, elementocalificador
 FROM 
 (
 SELECT  mdl_course.id AS idcurso, mdl_user.id AS idalumno, mdl_grade_grades.itemid as idActividad, ROUND(mdl_grade_grades.finalgrade,2) AS nota, 
@@ -9,7 +8,17 @@ DATE_ADD('1970-01-01', INTERVAL mdl_grade_grades.timemodified SECOND) AS fechano
     WHEN mdl_grade_items.itemtype ='category' THEN mdl_grade_categories.fullname 
     ELSE mdl_grade_items.itemname
     END AS elementocalificador ,
-    ROW_NUMBER() OVER (PARTITION BY idcurso, idactividad ORDER BY idcurso, idActividad, fechanota, nota desc) AS rank
+    
+    /*Interaccion01_01 mejor nota*/ 
+    /*ROW_NUMBER() OVER (PARTITION BY idcurso, idactividad ORDER BY idcurso asc, idActividad asc, nota desc, fechanota asc) AS rank*/
+    /*Interaccion01_02 primero en entregar*/ 
+    ROW_NUMBER() OVER (PARTITION BY idcurso, idactividad ORDER BY idcurso asc, idActividad asc, fechanota asc,nota desc) AS rank
+    
+    /*Interaccion02_01 mejor nota*/ 
+    /*ROW_NUMBER() OVER (PARTITION BY idcurso, idactividad ORDER BY idcurso asc, idActividad asc, nota desc, fechanota asc) AS rank*/
+    /*Interaccion02_01 último en entregar*/ 
+    /*ROW_NUMBER() OVER (PARTITION BY idcurso, idactividad ORDER BY idcurso asc, idActividad asc, fechanota desc, nota desc) AS rank*/
+    
     /*mdl_grade_items.sortorder*/
 FROM mdl_course
     JOIN mdl_context ON mdl_course.id = mdl_context.instanceid
@@ -21,11 +30,13 @@ FROM mdl_course
     JOIN mdl_course_categories ON mdl_course_categories.id = mdl_course.category
     left join mdl_scale ON mdl_scale.id = mdl_grade_grades.rawscaleid
 WHERE mdl_grade_items.courseid = mdl_course.id 
-        AND mdl_grade_grades.finalgrade is not null 
+        AND mdl_grade_grades.finalgrade is not null AND mdl_grade_grades.finalgrade > 50 
         AND mdl_grade_items.hidden=0
         /*AND mdl_grade_items.itemtype <> 'course'*/
         AND mdl_grade_items.itemtype = 'mod'
         AND mdl_course.id IN (2,4) 
+        AND mdl_user.id NOT IN(30,21,42,46)
         ) AS X
- WHERE rank <= 5
+        WHERE idactividad = 47
+WHERE rank < 5 
 
